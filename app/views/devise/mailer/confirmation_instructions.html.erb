@@ -1,0 +1,5 @@
+<p>Bonjour <%= @resource.fullname %>!</p>
+
+<p>Pour confirmer votre mail veuillez cliquer sur le lien suivant :</p>
+
+<p><%= link_to 'je confirme mon mail', confirmation_url(@resource, confirmation_token: @token) %></p>
