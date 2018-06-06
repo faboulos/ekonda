@@ -33,9 +33,8 @@
                        </tr>
                    </tbody>
             </table>
-     </div>
 
-     <br>
+            <br>
      <h5><span id="stripe"><span></h5>
      
      <%= fields_for( :payment ) do |p| %>
@@ -62,8 +61,11 @@
               </div>
           </div>
      </div>
+     </div>
+
+     <% end %>
  
- <% end %>
+ 
      <%= f.hidden_field :room_id, value: @room.id %> 
      <%= f.hidden_field :price, value: @room.price %>
      <%= f.hidden_field :total, id: 'reservation_total' %>
@@ -207,6 +209,6 @@
 
 <script language="Javascript">
  
- Stripe.setPublishableKey('PUBLISHABLE_KEY');
+ Stripe.setPublishableKey('pk_test_8gxzt7G69zlvLnrAzV1Hcc9S');
  
  </script>
