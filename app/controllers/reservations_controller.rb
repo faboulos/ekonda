@@ -42,7 +42,9 @@ def create
         end
 
         rescue Exception
-
+            
+            @reservation.destroy
+            
             puts 'Le paiement a échoué'
 
             redirect_to @reservation.room, notice : "votre paiement a été rejeté"
