@@ -28,13 +28,35 @@ end
 def create
  
     @reservation = current_user.reservations.create(reservation_params)
-    if @reservation.save
- 
-        AppMailer.new_reservation(Room.find(@reservation.room_id), @reservation).deliver_now
-  
-        redirect_to @reservation.room, notice: "Votre réservation a été acceptée"
-  
-  end
+    
+    if @reservation.persited?
+        @payement = Payment.new({email: User.find(@reservation.user_id).email,
+            token: params[:payement]["token"], Reservation_id: @reservation.id, amount: @reservation.total
+        })
+    begin
+        @payement.process_payement
+
+        if @payement.save
+            AppMailer.new_reservation(Room.find(@reservation.room_id), @reservation).deliver_now
+            redirect_to @reservation.room, notice: "Votre réservation a été acceptée"
+        end
+
+        rescue Exception
+
+            puts 'Le paiement a échoué'
+
+            redirect_to @reservation.room, notice : "votre paiement a été rejeté"
+        end
+
+        else
+
+            redirect_to @reservation.room, notice: "Votre paiement a été refusé"
+        end
+    else
+
+
+    end
+    
 end
  
 def your_trips
@@ -51,7 +73,7 @@ end
 private
  
      def reservation_params         
-        params.require(:reservation).permit(:start_date, :end_date, :price, :total, :room_id)     
+        params.require(:reservation).permit(:start_date, :end_date, :price, :total, :room_id, :payement)     
      end 
 end
 
