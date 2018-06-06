@@ -59,7 +59,6 @@ gem 'sendgrid-ruby'
 gem 'stripe'
 
 
-
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 

@@ -17,7 +17,7 @@ class Payment < ActiveRecord::Base
          Stripe::Charge.create customer: customer.id,#à partir de ce client, si le paiement est valide on crée le paiement
      
                                amount: Reservation.last.total*100,
-                               description: 'Réservation Aiirbnb',
+                               description: 'Réservation ekonda',
                                currency: 'eur'
      end
      
