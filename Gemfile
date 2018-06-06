@@ -56,6 +56,8 @@ gem 'rails-timeago'
 
 gem 'sendgrid-ruby'
 
+gem 'stripe'
+
 
 
 # Use Capistrano for deployment
