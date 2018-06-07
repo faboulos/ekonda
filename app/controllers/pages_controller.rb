@@ -1,45 +1,38 @@
 class PagesController < ApplicationController
+  def home
+    @rooms = Room.all.sample(3)
+  end
 
-        def home
-          @rooms =
-            if ActiveRecord::Base.connection.adapter_name == 'Mysql2'
-              Room.order("RAND()").limit(3)
-            else
-              Room.order("RANDOM()").limit(3)
-            end
-        end
+  def search
+    if params[:search].present?
+      session[:ekonda_search] = params[:search]
+    end
 
-        def search
-          if params[:search].present? && params[:search].strip != ""
-            session[:ekonda_search] = params[:search]
-          end
+    arrResult = Array.new
 
-          arrResult = Array.new
+    if session[:ekonda_search].present?
+      @rooms_address = Room.active
+                           .near(session[:ekonda_search], 5, order: 'distance')
+    else
+      @rooms_address = Room.active
+    end
 
-          if session[:ekonda_search] && session[:ekonda_search] != ""
-            @rooms_address = Room.where(active: true).near(session[:ekonda_search], 5, order:'distance')
-          else
-            @rooms_address = Room.where(active: true).all
-          end
+    @search = @rooms_address.ransack(params[:q])
+    @rooms = @search.result
 
-          @search = @rooms_address.ransack(params[:q])
-          @rooms = @search.result
+    @arrRooms = @rooms.to_a
 
-          @arrRooms = @rooms.to_a
+    if params[:start_date].present? && params[:end_date].present?
+      start_date = Date.parse(params[:start_date])
+      end_date = Date.parse(params[:end_date])
 
-          if (params[:start_date] && params[:end_date] && !params[:start_date].empty? & !params[:end_date].empty?)
-            start_date = Date.parse(params[:start_date])
-            end_date = Date.parse(params[:end_date])
+      @rooms.each do |room|
+        not_available = room.reservations
+                            .reservation_dates(start_date, end_date)
+                            .limit(1)
 
-            @rooms.each do |room|
-                not_available = room.reservations.where("(? <= start_date AND start_date <= ?) OR
-                (? <= end_date AND end_date <= ?) OR (start_date < ? AND ? < end_date)", start_date, end_date,
-                start_date, end_date, start_date, end_date).limit(1)
-
-                if not_available.length > 0
-                  @arrRooms.delete(room)
-                end
-            end
-          end
+        @arrRooms.delete(room) if not_available.length > 0
       end
+    end
+  end
 end
