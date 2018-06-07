@@ -9,9 +9,8 @@ default: &default
   encoding: utf8
   database: ekonda
   username: root
-  password: root
-  socket:  /Applications/MAMP/tmp/mysql/mysql.sock
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  password:
+  pool: 5
   timeout: 5000
 
 development:
@@ -28,4 +27,4 @@ test:
 production:
   <<: *default
   database: ekonda
-  
+
