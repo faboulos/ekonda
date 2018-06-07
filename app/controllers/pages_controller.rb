@@ -1,7 +1,12 @@
 class PagesController < ApplicationController
 
         def home
-          @rooms = Room.order("RAND()").limit(3)
+          @rooms =
+            if ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+              Room.order("RAND()").limit(3)
+            else
+              Room.order("RANDOM()").limit(3)
+            end
         end
 
         def search
